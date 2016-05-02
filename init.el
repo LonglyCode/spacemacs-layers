@@ -70,9 +70,8 @@ values."
       ;; shell-default-shell 'eshell
       shell-default-term-shell "/usr/bin/zsh"
       shell-protect-eshell-prompt nil)
-     ;; spell-checking
-     (spacemacs-layouts :variables layouts-enable-autosave t
-                        layouts-autosave-delay 300)
+     ;; (spacemacs-layouts :variables layouts-enable-autosave t
+     ;;                    layouts-autosave-delay 300)
      (spell-checking :variables spell-checking-enable-by-default nil)
      (syntax-checking
       :variables

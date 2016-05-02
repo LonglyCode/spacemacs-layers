@@ -12,32 +12,282 @@
 
 ;; List of all packages to install and/or initialize. Built-in packages
 ;; which require an initialization must be listed explicitly in the list.
-(setq wtxlayer-packages
+(setq wtx-edit-packages
       '(
         company
         company-anaconda
-        ;; (comint-mode :location built-in)
         yasnippet
         ace-pinyin
         js2-mode
         avy
-        chinese-pyim
         youdao-dictionary
         pangu-spacing
         helm-github-stars
         deft
-        js-comint
-        nodejs-repl
         web-mode
         impatient-mode
+        (nodejs-repl-eval :location local)
+        (dired-mode :location built-in)
        ;; chinese-fonts-setup
+        peep-dired
+        beacon
+        evil-vimish-fold
+        wrap-region
+        projectile
+        json-mode
+        visual-regexp
+        flycheck-package
+        markdown-mode
+        keyfreq
+        css-mode
+        tagedit
+        hydra
       ))
 
 ;; List of packages to exclude.
-(setq wtxlayer-excluded-packages '())
+(setq wtx-edit-excluded-packages '())
 
+(defun wtx-edit/post-init-tagedit ()
+  (add-hook 'web-mode-hook (lambda () (tagedit-mode 1))))
 
-(defun wtxlayer/init-impatient-mode ()
+(defun wtx-edit/post-init-css-mode ()
+  (progn
+    (dolist (hook '(css-mode-hook sass-mode-hook less-mode-hook))
+      (add-hook hook 'rainbow-mode))
+
+    (defun css-imenu-make-index ()
+      (save-excursion
+        (imenu--generic-function '((nil "^ *\\([^ ]+\\) *{ *$" 1)))))
+
+    (add-hook 'css-mode-hook
+              (lambda ()
+                (setq imenu-create-index-function 'css-imenu-make-index)))))
+
+(defun wtx-edit/init-keyfreq ()
+  (use-package keyfreq
+    :init
+    (progn
+      (keyfreq-mode t)
+      (keyfreq-autosave-mode 1))))
+
+(defun wtx-edit/post-init-markdown-mode ()
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
+
+    (with-eval-after-load 'markdown-mode
+      (progn
+        (when (configuration-layer/package-usedp 'company)
+          (spacemacs|add-company-hook markdown-mode))
+
+        (defun wtx/markdown-to-html ()
+          (interactive)
+          (start-process "grip" "*gfm-to-html*" "grip" (buffer-file-name) "5000")
+          (browse-url (format "http://localhost:5000/%s.%s" (file-name-base) (file-name-extension (buffer-file-name)))))
+
+        (spacemacs/set-leader-keys-for-major-mode 'gfm-mode-map
+          "p" 'wtx/markdown-to-html)
+        (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
+          "p" 'wtx/markdown-to-html)
+
+        (evil-define-key 'normal markdown-mode-map (kbd "TAB") 'markdown-cycle)
+        ))
+    ))
+
+(defun wtx-edit/init-visual-regexp ()
+  (use-package visual-regexp
+    :init))
+
+(defun wtx-edit/init-flycheck-package ()
+  (use-package flycheck-package))
+
+(defun wtx-edit/post-init-json-mode ()
+  (add-to-list 'auto-mode-alist '("\\.tern-project\\'" . json-mode)))
+
+(defun wtx-edit/post-init-projectile ()
+  (with-eval-after-load 'projectile
+    (progn
+      (setq projectile-completion-system 'ivy)
+      (add-to-list 'projectile-other-file-alist '("html" "js")) ;; switch from html -> js
+      (add-to-list 'projectile-other-file-alist '("js" "html")) ;; switch from js -> html
+      )))
+
+(defun wtx-edit/init-wrap-region ()
+  (use-package wrap-region
+    :init
+    (progn
+      (wrap-region-global-mode t)
+      (wrap-region-add-wrappers
+       '(("$" "$")
+         ("{-" "-}" "#")
+         ("/" "/" nil ruby-mode)
+         ("/* " " */" "#" (java-mode javascript-mode css-mode js2-mode))
+         ("`" "`" nil (markdown-mode ruby-mode))))
+      (add-to-list 'wrap-region-except-modes 'dired-mode)
+      (add-to-list 'wrap-region-except-modes 'web-mode)
+      )
+    :defer t
+    :config
+    (spacemacs|hide-lighter wrap-region-mode)))
+
+(defun wtx-edit/init-evil-vimish-fold ()
+  (use-package evil-vimish-fold
+    :init
+    (vimish-fold-global-mode 1)
+    :config
+    (progn
+      (define-key evil-normal-state-map (kbd "zf") 'vimish-fold)
+      (define-key evil-visual-state-map (kbd "zf") 'vimish-fold)
+      (define-key evil-normal-state-map (kbd "zd") 'vimish-fold-delete)
+      (define-key evil-normal-state-map (kbd "za") 'vimish-fold-toggle))))
+
+(defun wtx-edit/init-beacon ()
+  (use-package beacon
+    :init
+    (progn
+      (spacemacs|add-toggle beacon
+        :status beacon-mode
+        :on (beacon-mode)
+        :off (beacon-mode -1)
+        :documentation "Enable point highlighting after scrolling"
+        :evil-leader "otb")
+
+      (spacemacs/toggle-beacon-on))
+    :config (spacemacs|hide-lighter beacon-mode)))
+
+(defun wtx-edit/init-peep-dired ()
+  ;;preview files in dired
+  (use-package peep-dired
+    :defer t
+    :commands (peep-dired-next-file
+               peep-dired-prev-file)
+    :bind (:map dired-mode-map
+                ("P" . peep-dired))))
+
+(defun wtx-edit/init-dired-mode ()
+  (use-package dired-mode
+    :init
+    (progn
+      (require 'dired-x)
+      (require 'dired-aux)
+      (setq dired-listing-switches "-alh")
+      (setq dired-guess-shell-alist-user
+            '(("\\.pdf\\'" "open")
+              ("\\.docx\\'" "open")
+              ("\\.\\(?:djvu\\|eps\\)\\'" "open")
+              ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "open")
+              ("\\.\\(?:xcf\\)\\'" "open")
+              ("\\.csv\\'" "open")
+              ("\\.tex\\'" "open")
+              ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
+               "open")
+              ("\\.\\(?:mp3\\|flac\\)\\'" "open")
+              ("\\.html?\\'" "open")
+              ("\\.md\\'" "open")))
+
+      ;; always delete and copy recursively
+      (setq dired-recursive-deletes 'always)
+      (setq dired-recursive-copies 'always)
+
+      (defvar dired-filelist-cmd
+        '(("vlc" "-L")))
+
+      (defun dired-get-size ()
+        (interactive)
+        (let ((files (dired-get-marked-files)))
+          (with-temp-buffer
+            (apply 'call-process "/usr/bin/du" nil t nil "-sch" files)
+            (message
+             "Size of all marked files: %s"
+             (progn
+               (re-search-backward "\\(^[ 0-9.,]+[A-Za-z]+\\).*total$")
+               (match-string 1))))))
+
+      (defun dired-start-process (cmd &optional file-list)
+        (interactive
+         (let ((files (dired-get-marked-files
+                       t current-prefix-arg)))
+           (list
+            (dired-read-shell-command "& on %s: "
+                                      current-prefix-arg files)
+            files)))
+        (let (list-switch)
+          (start-process
+           cmd nil shell-file-name
+           shell-command-switch
+           (format
+            "nohup 1>/dev/null 2>/dev/null %s \"%s\""
+            (if (and (> (length file-list) 1)
+                     (setq list-switch
+                           (cadr (assoc cmd dired-filelist-cmd))))
+                (format "%s %s" cmd list-switch)
+              cmd)
+            (mapconcat #'expand-file-name file-list "\" \"")))))
+
+      (defun dired-open-term ()
+        "Open an `ansi-term' that corresponds to current directory."
+        (interactive)
+        (let* ((current-dir (dired-current-directory))
+               (buffer (if (get-buffer "*zshell*")
+                           (switch-to-buffer "*zshell*")
+                         (ansi-term "/bin/zsh" "zshell")))
+               (proc (get-buffer-process buffer)))
+          (term-send-string
+           proc
+           (if (file-remote-p current-dir)
+               (let ((v (tramp-dissect-file-name current-dir t)))
+                 (format "ssh %s@%s\n"
+                         (aref v 1) (aref v 2)))
+             (format "cd '%s'\n" current-dir)))))
+
+      (defun dired-copy-file-here (file)
+        (interactive "fCopy file: ")
+        (copy-file file default-directory))
+
+      ;;dired find alternate file in other buffer
+      (defun my-dired-find-file ()
+        "Open buffer in another window"
+        (interactive)
+        (let ((filename (dired-get-filename nil t)))
+          (if (car (file-attributes filename))
+              (dired-find-alternate-file)
+            (dired-find-file-other-window))))
+
+      ;; do command on all marked file in dired mode
+      (defun wtx/dired-do-command (command)
+        "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+        (interactive "CRun on marked files M-x ")
+        (save-window-excursion
+          (mapc (lambda (filename)
+                  (find-file filename)
+                  (call-interactively command))
+                (dired-get-marked-files))))
+
+      (defun wtx/dired-up-directory()
+        "goto up directory and resue buffer"
+        (interactive)
+        (find-alternate-file ".."))
+
+      (evilified-state-evilify-map dired-mode-map
+        :mode dired-mode
+        :bindings
+        (kbd "C-k") 'wtx/dired-up-directory
+        "<RET>" 'dired-find-alternate-file
+        "E" 'dired-toggle-read-only
+        "C" 'dired-do-copy
+        "<mouse-2>" 'my-dired-find-file
+        "`" 'dired-open-term
+        "p" 'peep-dired-prev-file
+        "n" 'peep-dired-next-file
+        "z" 'dired-get-size
+        "c" 'dired-copy-file-here)
+      )
+    :defer t
+    )
+  )
+
+(defun wtx-edit/init-impatient-mode ()
   "Initialize impatient mode"
   (use-package impatient-mode
     :init
@@ -53,86 +303,29 @@
 )))
 
 
-(defun wtxlayer/init-nodejs-repl ()
-  (use-package nodejs-repl
+(defun wtx-edit/init-nodejs-repl-eval ()
+  (use-package nodejs-repl-eval
+    :commands (nodejs-repl-eval-buffer nodejs-repl-eval-dwim nodejs-repl-eval-function)
     :init
-    (progn
-      (spacemacs/declare-prefix-for-mode 'js2-mode
-                                         "me" "evaluating")
-      (evil-leader/set-key-for-mode 'js2-mode
-        "eb" 'nodejs-repl-eval-buffer))
-    )
-)
+    :defer t
+    ))
 
-(defun wtxlayer/init-js-comint ()
-  (use-package js-comint
-    :init
-    (progn
-      ;; http://stackoverflow.com/questions/13862471/using-node-js-with-js-comint-in-emacs
-      (setq inferior-js-mode-hook
-            (lambda ()
-              ;; We like nice colors
-              (ansi-color-for-comint-mode-on)
-              ;; Deal with some prompt nonsense
-              (add-to-list
-               'comint-preoutput-filter-functions
-               (lambda (output)
-                 (replace-regexp-in-string "\033\\[[0-9]+[GKJ]" "" output)))))
-      (setq inferior-js-program-command "node"))))
-
-(defun wtxlayer/post-init-web-mode ()
+(defun wtx-edit/post-init-web-mode ()
   (setq company-backends-web-mode '((company-dabbrev-code
                                      company-keywords
                                      company-etags)
                                     company-files company-dabbrev)))
 
-(defun wtxlayer/post-init-js2-mode ()
+(defun wtx-edit/post-init-js2-mode ()
   (progn
-    (remove-hook 'js2-mode-hook 'flycheck-mode)
-    (defun conditional-disable-modes ()
-      (when (> (buffer-size) 50000)
-        (flycheck-mode -1)))
-
-    (evil-leader/set-key-for-mode 'js2-mode
-      "ed" 'nodejs-repl-eval-dwim
-      "tb" 'zilong/company-toggle-company-tern)
-
-    (evil-leader/set-key-for-mode 'js2-mode
-      "ga" 'projectile-find-other-file
-      "gA" 'projectile-find-other-file-other-window)
-
-    (evil-leader/set-key-for-mode 'web-mode
-      "ga" 'projectile-find-other-file
-      "gA" 'projectile-find-other-file-other-window)
-    (eval-after-load 'js2-mode
-      '(progn
-         (add-hook 'js2-mode-hook (lambda () (setq mode-name "JS2")))
-         (define-key js2-mode-map   (kbd "s-.") 'company-tern)))
-
-    ;; (add-hook 'js2-mode-hook 'which-function-mode)
-    (add-hook 'js2-mode-hook 'conditional-disable-modes)
-    (add-hook 'js2-mode-hook '(lambda ()
-                                (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-                                (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-                                (local-set-key "\C-cb" 'js-send-buffer)
-                                (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-                                (local-set-key "\C-cl" 'js-load-file-and-go)
-                                ))
+    (add-hook 'js2-mode-hook 'which-function-mode)
 
     (spacemacs/declare-prefix-for-mode 'js2-mode "ms" "repl")
-    (evil-leader/set-key-for-mode 'js2-mode
-      "sr" 'js-send-region
-      "sR" 'js-send-region-and-go
-      "sb" 'js-send-buffer
-      "sB" 'js-send-buffer-and-go
-      "sd" 'js-send-last-sexp
-      "sD" 'js-send-last-sexp-and-go
+    (spacemacs/set-leader-keys-for-major-mode 'js2-mode
       "gd" 'helm-etags-select)
 
 
-    (use-package js2-mode
-      :defer t
-      :config
+    (with-eval-after-load 'js2-mode
       (progn
         ;; these mode related variables must be in eval-after-load
         ;; https://github.com/magnars/.emacs.d/blob/master/settings/setup-js2-mode.el
@@ -155,25 +348,54 @@
         (setq-default js2-indent-switch-body t)
         ;; Let flycheck handle parse errors
         (setq-default js2-show-parse-errors nil)
-        (setq-default js2-strict-missing-semi-warning t)
+        (setq-default js2-strict-missing-semi-warning nil)
         (setq-default js2-highlight-external-variables t)
+        (setq-default js2-strict-trailing-comma-warning nil)
 
         (add-hook 'js2-mode-hook
                   #'(lambda ()
                       (define-key js2-mode-map "\C-ci" 'js-doc-insert-function-doc)
                       (define-key js2-mode-map "@" 'js-doc-insert-tag)))
 
-        (defun js2-toggle-indent ()
-          (interactive)
-          (setq js-indent-level (if (= js-indent-level 2) 4 2))
-          (setq js2-indent-level (if (= js-indent-level 2) 4 2))
-          (setq js2-basic-offset (if (= js-indent-level 2) 4 2))
-          (message "js-indent-level, js2-indent-level, and js2-basic-offset set to %d"
-                   js2-basic-offset))
+        (defun my-web-mode-indent-setup ()
+          (setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
+          (setq web-mode-css-indent-offset 2)    ; web-mode, css in html file
+          (setq web-mode-code-indent-offset 2)   ; web-mode, js code in html file
+          )
 
-        (evil-leader/set-key-for-mode 'js2-mode
-          "oj" 'js2-toggle-indent)
+        (add-hook 'web-mode-hook 'my-web-mode-indent-setup)
+
+        (defun my-toggle-web-indent ()
+          (interactive)
+          ;; web development
+          (if (or (eq major-mode 'js-mode) (eq major-mode 'js2-mode))
+              (progn
+                (setq js-indent-level (if (= js-indent-level 2) 4 2))
+                (setq js2-basic-offset (if (= js2-basic-offset 2) 4 2))))
+
+          (if (eq major-mode 'web-mode)
+              (progn (setq web-mode-markup-indent-offset (if (= web-mode-markup-indent-offset 2) 4 2))
+                     (setq web-mode-css-indent-offset (if (= web-mode-css-indent-offset 2) 4 2))
+                     (setq web-mode-code-indent-offset (if (= web-mode-code-indent-offset 2) 4 2))))
+          (if (eq major-mode 'css-mode)
+              (setq css-indent-offset (if (= css-indent-offset 2) 4 2)))
+
+          (setq indent-tabs-mode nil))
+
+
+        (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+          "oi" 'my-toggle-web-indent)
+        (spacemacs/set-leader-keys-for-major-mode 'js-mode
+          "oi" 'my-toggle-web-indent)
+        (spacemacs/set-leader-keys-for-major-mode 'web-mode
+          "oi" 'my-toggle-web-indent)
+        (spacemacs/set-leader-keys-for-major-mode 'css-mode
+          "oi" 'my-toggle-web-indent)
+
         (spacemacs/declare-prefix-for-mode 'js2-mode "mo" "toggle")
+        (spacemacs/declare-prefix-for-mode 'js-mode "mo" "toggle")
+        (spacemacs/declare-prefix-for-mode 'web-mode "mo" "toggle")
+        (spacemacs/declare-prefix-for-mode 'css-mode "mo" "toggle")
 
         (autoload 'flycheck-get-checker-for-buffer "flycheck")
         (defun sanityinc/disable-js2-checks-if-flycheck-active ()
@@ -194,6 +416,7 @@
         ;; (setq imenu-generic-expression '((nil "describe\\(\"\\(.+\\)\"" 1)))
         (imenu--generic-function '(("describe" "\\s-*describe\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
                                    ("it" "\\s-*it\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
+                                   ("test" "\\s-*test\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
                                    ("before" "\\s-*before\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
                                    ("after" "\\s-*after\\s-*(\\s-*[\"']\\(.+\\)[\"']\\s-*,.*" 1)
                                    ("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
@@ -213,6 +436,8 @@
                                    ("Watch" "[. \t]\$watch( *['\"]\\([^'\"]+\\)" 1)
                                    ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
                                    ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+                                   ("Function" "^var[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+                                   ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*()[ \t]*{" 1)
                                    ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*:[ \t]*function[ \t]*(" 1)
                                    ("Class" "^[ \t]*var[ \t]*\\([0-9a-zA-Z]+\\)[ \t]*=[ \t]*\\([a-zA-Z]*\\).extend" 1)
                                    ("Class" "^[ \t]*cc\.\\(.+\\)[ \t]*=[ \t]*cc\.\\(.+\\)\.extend" 1)
@@ -223,7 +448,7 @@
                 (setq imenu-create-index-function 'js2-imenu-make-index)))
     ))
 
-(defun wtxlayer/post-init-yasnippet()
+(defun wtx-edit/post-init-yasnippet()
   (progn
     (setq-default yas-prompt-functions '(yas-ido-prompt yas-dropdown-prompt))
     (mapc #'(lambda (hook) (remove-hook hook 'spacemacs/load-yasnippet)) '(prog-mode-hook
@@ -233,7 +458,7 @@
       (unless yas-global-mode
         (progn
           (yas-global-mode 1)
-          (setq my-snippet-dir (expand-file-name "~/demo/snippets"))
+          (setq my-snippet-dir (expand-file-name "~/.spacemacs.d/snippets"))
           (setq yas-snippet-dirs  my-snippet-dir)
           (yas-load-directory my-snippet-dir)
           (setq yas-wrap-around-region t)))
@@ -246,18 +471,18 @@
 (when (configuration-layer/layer-usedp 'auto-completion)
 
   ;; Hook company to comint-mode, comint-mode is a inferior mode in emacs
-  (defun wtxlayer/post-init-company ()
+  (defun wtx-edit/post-init-company ()
     (spacemacs|add-company-hook comint-mode))
 
   ;; Add the backend to the major-mode specific backend list, it can not work to pushing company-anaconda, why?
-  (defun wtxlayer/post-init-company-anaconda ()
+  (defun wtx-edit/post-init-company-anaconda ()
     (use-package company-anaconda
       :if (configuration-layer/package-usedp 'company)
       :defer t
       :init (push 'company-anaconda company-backends-comint-mode))))
 
 
-(defun wtxlayer/init-ace-pinyin ()
+(defun wtx-edit/init-ace-pinyin ()
   (use-package ace-pinyin
     :init
     (progn
@@ -266,41 +491,13 @@
       (spacemacs|hide-lighter ace-pinyin-mode))))
 
 
-(defun wtxlayer/init-chinese-pyim ()
-  "Initialize chinese-pyim"
-  (use-package chinese-pyim
-    :init
-    (progn
-      (setq default-input-method "chinese-pyim")
-      ;; (define-key evil-emacs-state-map (kbd "C-<SPC>") 'toggle-input-method))
-      (global-set-key (kbd "C-<SPC>") 'toggle-input-method))
-    :config
-    (progn
-      (setq pyim-use-tooltip t
-            pyim-tooltip-width-adjustment 1.2
-            pyim-dicts
-            '((:name "SogouPY"
-                     :file "~/dicts/sogou.pyim"
-                     :coding utf-8-unix)))
-    ;; switch to English input when helm buffer activate.u
-            (setq pyim-english-input-switch-function
-            'pyim-helm-buffer-active-p)
-      ;; turn off evil escape when default input method (pyim) on.
-      ;; if not, the first key of escap sequence will cause a problem
-      ;; when trying to fast insert corresponding letter by hitting Enter.
-      (add-hook 'input-method-activate-hook 'pyim-turn-off-evil-escape t)
-      ;; after input method deactivated, turn on evil escape.
-      (add-hook 'input-method-deactivate-hook 'pyim-turn-on-evil-escape t)
-      )))
-
-(defun wtxlayer/init-youdao-dictionary ()
+(defun wtx-edit/init-youdao-dictionary ()
   (use-package youdao-dictionary
-    :if chinese-enable-youdao-dict
     :defer
     :init
     (progn
       (evil-leader/set-key
-        "ot" 'youdao-dictionary-search-at-point+))
+        "oy" 'youdao-dictionary-search-at-point+))
     :config
     (progn
       ;; Enable Cache
@@ -310,7 +507,8 @@
             (concat spacemacs-cache-directory ".youdao")
             ;; Enable Chinese word segmentation support
             youdao-dictionary-use-chinese-word-segmentation t))))
-(defun wtxlayer/init-pangu-spacing ()
+
+(defun wtx-edit/init-pangu-spacing ()
   (use-package pangu-spacing
     :defer t
     :init (progn (global-pangu-spacing-mode 1)
@@ -320,7 +518,7 @@
                            '(lambda ()
                               (set (make-local-variable 'pangu-spacing-real-insert-separtor) t))))))
 
-(defun wtxlayer/init-helm-github-stars ()
+(defun wtx-edit/init-helm-github-stars ()
   (use-package helm-github-stars
     :defer t
     :config
@@ -328,7 +526,7 @@
       (setq helm-github-stars-username "LonglyCode")
       (setq helm-github-stars-cache-file "~/.emacs.d/.cache/hgs-cache"))))
 
-(defun wtxlayer/post-init-deft ()
-  (setq deft-use-filter-string-for-filename t)
-  (evil-leader/set-key-for-mode 'deft-mode "mq" 'quit-window)
-  (setq deft-extension "org"))
+;; (defun wtx-edit/post-init-deft ()
+;;   (setq deft-use-filter-string-for-filename t)
+;;   (evil-leader/set-key-for-mode 'deft-mode "mq" 'quit-window)
+;;   (setq deft-extension "org"))

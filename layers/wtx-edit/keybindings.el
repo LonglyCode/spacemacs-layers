@@ -1,5 +1,3 @@
 (global-set-key (kbd "<f5>") 'wtx/run-current-file)
 (define-key evil-normal-state-map (kbd "U") 'evil-upcase)
 (global-set-key (kbd "C-x k") 'kill-default-buffer)
-(global-set-key (kbd "C-;") 'wtx/insert-end-of-line-semicolon)
-(define-key evil-normal-state-map "t" 'avy-goto-char-2)
