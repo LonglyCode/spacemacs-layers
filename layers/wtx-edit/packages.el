@@ -42,6 +42,7 @@
         css-mode
         tagedit
         hydra
+        nodejs-repl
       ))
 
 ;; List of packages to exclude.
@@ -302,6 +303,20 @@ open and unsaved."
         "p" 'imp-visit-buffer)
 )))
 
+(defun wtx-edit/init-nodejs-repl ()
+  (use-package nodejs-repl
+    :init
+    :defer t
+    :config
+    (progn
+      (spacemacs/declare-prefix-for-mode 'js2-mode
+                                         "mt" "REPL")
+      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+        "tb" 'nodejs-repl-eval-buffer
+        "tf" 'nodejs-repl-eval-function
+        "td" 'nodejs-repl-eval-dwim))
+    )
+)
 
 (defun wtx-edit/init-nodejs-repl-eval ()
   (use-package nodejs-repl-eval
