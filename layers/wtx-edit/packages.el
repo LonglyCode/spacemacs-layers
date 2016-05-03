@@ -53,7 +53,7 @@
       (defhydra hydra-org-template (:color blue :hint nil)
     "
 _c_enter  _q_uote     _e_macs-lisp    _L_aTeX:
-_l_atex   _E_xample   _p_erl          _i_ndex:
+_l_atex   _E_xample   _p_ython          _i_ndex:
 _a_scii   _v_erse     _P_erl tangled  _I_NCLUDE:
 _s_rc     ^ ^         plant_u_ml      _H_TML:
 _h_tml    ^ ^         ^ ^             _A_SCII:
@@ -74,16 +74,16 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
            (forward-line)))
     ("p" (progn
            (hot-expand "<s")
-           (insert "perl")
+           (insert "python")
            (forward-line)))
     ("u" (progn
            (hot-expand "<s")
            (insert "plantuml :file CHANGE.png")
            (forward-line)))
     ("P" (progn
-           (insert "#+HEADERS: :results output :exports both :shebang \"#!/usr/bin/env perl\"\n")
+           (insert "#+HEADERS: :results output :exports both :shebang \"#!/usr/bin/env python\"\n")
            (hot-expand "<s")
-           (insert "perl")
+           (insert "python")
            (forward-line)))
     ("I" (hot-expand "<I"))
     ("H" (hot-expand "<H"))
@@ -542,7 +542,11 @@ open and unsaved."
 
   ;; Hook company to comint-mode, comint-mode is a inferior mode in emacs
   (defun wtx-edit/post-init-company ()
-    (spacemacs|add-company-hook comint-mode))
+    (progn
+      (setq company-etags-everywhere '(html-mode web-mode))
+      (spacemacs|add-company-hook comint-mode)
+      )
+    )
 
   ;; Add the backend to the major-mode specific backend list, it can not work to pushing company-anaconda, why?
   (defun wtx-edit/post-init-company-anaconda ()
