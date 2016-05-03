@@ -1,6 +1,31 @@
 
 (require 'cl)
 (require 'ido)
+(defadvice org-html-paragraph (before org-html-paragraph-advice
+                                      (paragraph contents info) activate)
+  "Join consecutive Chinese lines into a single long line without
+unwanted space when exporting org-mode to html."
+  (let* ((origin-contents (ad-get-arg 1))
+         (fix-regexp "[[:multibyte:]]")
+         (fixed-contents
+          (replace-regexp-in-string
+           (concat
+            "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)") "\\1\\2" origin-contents)))
+    (ad-set-arg 1 fixed-contents)))
+
+(defadvice counsel-find-file (after find-file-sudo activate)
+  "Find file as root if necessary."
+  (let ((dir (f-dirname (buffer-file-name)))
+        (file (buffer-file-name)))
+    (unless (and file (f-writable? file))
+      (when (and (f-exists? dir) (not (f-writable? dir)))
+        (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))))
+
+(defun insert-org-or-md-img-link (prefix imagename)
+  "insert image link"
+  (if (eq major-mode 'org-mode)
+      (insert (format "[[%s%s]]" prefix imagename))
+    (insert (format "![%s](%s%s)" imagename prefix imagename))))
 
 (defadvice newline-and-indent (before insert-end-of-line-semicolon activate)
   "insert-end-of-line-semicolon for python-mode"
