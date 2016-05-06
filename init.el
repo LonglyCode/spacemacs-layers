@@ -136,7 +136,7 @@ values."
    ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
    dotspacemacs-startup-recent-list-size 5
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'text-mode
+   dotspacemacs-scratch-mode 'restclient-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -303,8 +303,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq tags-table-list (list "~/js-project/TAGS" "~/js-project/tags"))
-  (setq powerline-default-separator 'utf-8)
+  (setq tags-table-list (list "~/js-project/js/TAGS" "~/js-project/css/TAGS"))
+  ;; (setq powerline-default-separator 'utf-8)
   (global-company-mode)
   (smartparens-global-mode)
   (golden-ratio-mode t)

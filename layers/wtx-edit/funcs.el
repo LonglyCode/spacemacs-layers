@@ -230,20 +230,21 @@ version 2015-08-21"
 ;;     (setq url-gateway-method 'native)))
 
 ;; http://blog.binchen.org/posts/use-ivy-mode-to-search-bash-history.html
-;; ;FIXME: make it work with zsh
-(defun counsel-yank-bash-history ()
+(defun wtx/counsel-yank-zsh-history ()
   "Yank the bash history"
   (interactive)
   (let (hist-cmd collection val)
     (shell-command "history -r") ; reload history
     (setq collection
-          (nreverse
-           (split-string (with-temp-buffer (insert-file-contents (file-truename "~/.bash_history"))
-                                           (buffer-string))
-                         "\n"
-                         t)))
+          (mapcar #'(lambda (e) (last (split-string e ";" t)))
+                  (nreverse
+                   (split-string (with-temp-buffer (insert-file-contents (file-truename "~/.zsh_history"))
+                                                   (buffer-string))
+                                 "\n"
+                                 t)))
+          )
     (when (and collection (> (length collection) 0)
                (setq val (if (= 1 (length collection)) (car collection)
-                           (ivy-read (format "BASH history:") collection))))
+                           (ivy-read (format "ZSH history:") collection))))
       (kill-new val)
       (message "%s => kill-ring" val))))

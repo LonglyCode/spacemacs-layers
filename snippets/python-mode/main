@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: main()
-# key: main
+# key: ifmain
 # group: Definitions
 # --
 if __name__=='__main__':
