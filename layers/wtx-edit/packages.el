@@ -43,10 +43,25 @@
         tagedit
         hydra
         nodejs-repl
+        ivy
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/post-init-ivy()
+  (defun ivy-yank-action (x)
+    (kill-new x))
+
+  (defun ivy-copy-to-buffer-action (x)
+    (with-ivy-window
+      (insert x)))
+
+  (ivy-set-actions
+   t
+   '(("i" ivy-copy-to-buffer-action "insert")
+     ("y" ivy-yank-action "yank")))
+ )
 
 (defun wtx-edit/post-init-hydra ()
     (progn

@@ -250,15 +250,3 @@ version 2015-08-21"
       (kill-new val)
       (message "%s => kill-ring" val))))
 
-
-(defun ivy-yank-action (x)
-  (kill-new x))
-
-(defun ivy-copy-to-buffer-action (x)
-  (with-ivy-window
-    (insert x)))
-
-(ivy-set-actions
- t
- '(("i" ivy-copy-to-buffer-action "insert")
-   ("y" ivy-yank-action "yank")))
