@@ -1,6 +1,7 @@
 
 (require 'cl)
 (require 'ido)
+
 (defadvice org-html-paragraph (before org-html-paragraph-advice
                                       (paragraph contents info) activate)
   "Join consecutive Chinese lines into a single long line without
@@ -248,3 +249,16 @@ version 2015-08-21"
                            (ivy-read (format "ZSH history:") collection))))
       (kill-new val)
       (message "%s => kill-ring" val))))
+
+
+(defun ivy-yank-action (x)
+  (kill-new x))
+
+(defun ivy-copy-to-buffer-action (x)
+  (with-ivy-window
+    (insert x)))
+
+(ivy-set-actions
+ t
+ '(("i" ivy-copy-to-buffer-action "insert")
+   ("y" ivy-yank-action "yank")))
