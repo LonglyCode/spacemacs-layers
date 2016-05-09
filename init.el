@@ -53,7 +53,10 @@ values."
       :variables
       ibuffer-group-buffers-by nil)
      emacs-lisp
-     python
+     (python :variables
+             python-test-runner 'pytest
+             python-enable-yapf-format-on-save t
+             )
      colors
      ruby
      react
@@ -85,7 +88,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '()
    ;; A list of packages that will not be install and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(spaceline)
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
