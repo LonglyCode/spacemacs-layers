@@ -586,7 +586,8 @@ open and unsaved."
     :init
     (progn
       (evil-leader/set-key
-        "oy" 'youdao-dictionary-search-at-point+))
+        "oy" 'youdao-dictionary-search-at-point+
+        "ov" 'youdao-dictionary-play-voice-at-point))
     :config
     (progn
       ;; Enable Cache
