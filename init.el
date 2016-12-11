@@ -57,6 +57,7 @@ values."
      (python :variables
              python-test-runner 'pytest
              python-enable-yapf-format-on-save t
+             python-sort-imports-on-save t
              )
      colors
      ruby
