@@ -19,11 +19,10 @@
         yasnippet
         ace-pinyin
         js2-mode
-        avy
         youdao-dictionary
         pangu-spacing
         helm-github-stars
-        deft
+        ;; deft
         web-mode
         impatient-mode
         (nodejs-repl-eval :location local)

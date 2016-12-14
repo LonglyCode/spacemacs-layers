@@ -319,7 +319,7 @@ you should place your code here."
   (fcitx-evil-turn-on)
   (global-company-mode)
   (smartparens-global-mode)
-  (golden-ratio-mode t)
+  ;; (golden-ratio-mode t)
   (add-hook 'python-mode-hook (lambda () (electric-indent-local-mode -1)))
   (global-hl-line-mode -1)
   (setenv "SSH_ASKPASS" "git-gui--askpass")
