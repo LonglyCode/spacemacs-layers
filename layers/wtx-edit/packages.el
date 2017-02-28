@@ -43,10 +43,16 @@
         hydra
         nodejs-repl
         ivy
+        protobuf-mode
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-protobuf-mode ()
+  (use-package protobuf-mode
+    :init
+    (setq auto-mode-alist (cons '(".proto$" . protobuf-mode) auto-mode-alist))))
 
 (defun wtx-edit/post-init-ivy()
   (defun ivy-yank-action (x)
