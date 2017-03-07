@@ -37,7 +37,7 @@
         visual-regexp
         flycheck-package
         markdown-mode
-        keyfreq
+        ;; keyfreq
         css-mode
         tagedit
         hydra
@@ -139,12 +139,12 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
               (lambda ()
                 (setq imenu-create-index-function 'css-imenu-make-index)))))
 
-(defun wtx-edit/init-keyfreq ()
-  (use-package keyfreq
-    :init
-    (progn
-      (keyfreq-mode t)
-      (keyfreq-autosave-mode 1))))
+;; (defun wtx-edit/init-keyfreq ()
+;;   (use-package keyfreq
+;;     :init
+;;     (progn
+;;       (keyfreq-mode t)
+;;       (keyfreq-autosave-mode 1))))
 
 (defun wtx-edit/post-init-markdown-mode ()
   (progn
