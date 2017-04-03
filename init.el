@@ -32,7 +32,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     command-log
+     ;; command-log
      php
      windows-scripts
      yaml
