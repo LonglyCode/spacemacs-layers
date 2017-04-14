@@ -61,13 +61,12 @@ values."
      emacs-lisp
      (python :variables
              python-test-runner 'pytest
-             python-enable-yapf-format-on-save t
+             python-enable-yapf-format-on-save nil
              python-sort-imports-on-save t
              )
      colors
      ruby
      react
-     django
      html
      (c-c++ :variables
             c-c++-default-mode-for-headers 'c++-mode)
@@ -142,7 +141,7 @@ values."
    ;; the official spacemacs logo. An integer value is the index of text
    ;; banner, `random' chooses a random text banner in `core/banners'
    ;; directory. A string value must be a path to an image format supported
-   ;; by your Emacs build.
+   ;; by your Emacs buildj
    ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
    ;; List of items to show in the startup buffer. If nil it is disabled.

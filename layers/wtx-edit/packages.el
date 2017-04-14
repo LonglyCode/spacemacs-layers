@@ -185,6 +185,8 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
       (setq projectile-completion-system 'ivy)
       (add-to-list 'projectile-other-file-alist '("html" "js")) ;; switch from html -> js
       (add-to-list 'projectile-other-file-alist '("js" "html")) ;; switch from js -> html
+      (setq projectile-globally-ignored-directories
+            (append '(".svn") projectile-globally-ignored-directories))
       )))
 
 (defun wtx-edit/init-wrap-region ()
