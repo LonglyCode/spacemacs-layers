@@ -144,6 +144,7 @@ values."
    ;; by your Emacs buildj
    ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
+   ;; dotspacemacs-startup-banner 'doge
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects' `agenda' `todos'.
    ;; (default '(recents projects))
@@ -159,8 +160,8 @@ values."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
                          monokai
-                         spacemacs-dark
                          solarized-dark
+                         spacemacs-dark
                          spacemacs-light
                          solarized-light
                          leuven
@@ -337,6 +338,10 @@ you should place your code here."
   (setq-default js2-basic-offset 2)
   (setq-default js-indent-level 2)
   (define-key evil-normal-state-map "t" 'avy-goto-char)
+  (setq url-proxy-services
+        '(("no_proxy" . "^\\(127.0.0.1\\|localhost\\j10.*\\)")
+          ("http" . "127.0.0.1:6152")
+          ("https" . "127.0.0.1:6152")))
   )
 
 (custom-set-faces
@@ -393,7 +398,7 @@ you should place your code here."
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (command-log-mode phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode magit-svn protobuf-mode pdf-tools tablist powershell yaml-mode powerline spinner counsel swiper smartparens highlight helm helm-core projectile hydra ivy dash monokai-theme fcitx company-web web-completion-data company-tern dash-functional tern company-statistics company-c-headers company-anaconda youdao-dictionary names chinese-word-at-point yapfify xterm-color wrap-region web-mode web-beautify visual-regexp tagedit sql-indent smeargle slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe restclient rbenv rake rainbow-mode rainbow-identifiers pyvenv pytest pyenv-mode py-isort pug-mode pony-mode pip-requirements peep-dired pangu-spacing orgit org-projectile pcache org-present org org-pomodoro alert log4e gntp org-download ob-http nodejs-repl nginx-mode mwim multi-term mmm-mode minitest markdown-toc markdown-mode magit-gitflow livid-mode skewer-mode live-py-mode less-css-mode keyfreq json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc impatient-mode simple-httpd ibuffer-projectile hy-mode htmlize helm-github-stars haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip flycheck-package package-lint flycheck evil-vimish-fold vimish-fold evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help emmet-mode disaster diff-hl cython-mode company color-identifiers-mode coffee-mode cmake-mode clojure-snippets clj-refactor inflections edn multiple-cursors paredit peg clang-format cider-eval-sexp-fu cider queue clojure-mode chruby bundler inf-ruby beacon seq auto-yasnippet yasnippet auto-dictionary anaconda-mode pythonic ace-pinyin pinyinlib ace-jump-mode ac-ispell auto-complete solarized-theme ws-butler window-numbering which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline smex restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-make google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word counsel-projectile column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link)))
+    (winum unfill ob-restclient fuzzy company-restclient know-your-http-well command-log-mode phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode magit-svn protobuf-mode pdf-tools tablist powershell yaml-mode powerline spinner counsel swiper smartparens highlight helm helm-core projectile hydra ivy dash monokai-theme fcitx company-web web-completion-data company-tern dash-functional tern company-statistics company-c-headers company-anaconda youdao-dictionary names chinese-word-at-point yapfify xterm-color wrap-region web-mode web-beautify visual-regexp tagedit sql-indent smeargle slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe restclient rbenv rake rainbow-mode rainbow-identifiers pyvenv pytest pyenv-mode py-isort pug-mode pony-mode pip-requirements peep-dired pangu-spacing orgit org-projectile pcache org-present org org-pomodoro alert log4e gntp org-download ob-http nodejs-repl nginx-mode mwim multi-term mmm-mode minitest markdown-toc markdown-mode magit-gitflow livid-mode skewer-mode live-py-mode less-css-mode keyfreq json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc impatient-mode simple-httpd ibuffer-projectile hy-mode htmlize helm-github-stars haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip flycheck-package package-lint flycheck evil-vimish-fold vimish-fold evil-magit magit magit-popup git-commit with-editor eshell-z eshell-prompt-extras esh-help emmet-mode disaster diff-hl cython-mode company color-identifiers-mode coffee-mode cmake-mode clojure-snippets clj-refactor inflections edn multiple-cursors paredit peg clang-format cider-eval-sexp-fu cider queue clojure-mode chruby bundler inf-ruby beacon seq auto-yasnippet yasnippet auto-dictionary anaconda-mode pythonic ace-pinyin pinyinlib ace-jump-mode ac-ispell auto-complete solarized-theme ws-butler window-numbering which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline smex restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-make google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word counsel-projectile column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link)))
  '(paradox-github-token t)
  '(pos-tip-background-color "#eee8d5")
  '(pos-tip-foreground-color "#586e75")
@@ -418,7 +423,7 @@ you should place your code here."
      (240 . "#489e65")
      (260 . "#399f7e")
      (280 . "#2aa198")
-     (300 . "#2898af")
+
      (320 . "#2793ba")
      (340 . "#268fc6")
      (360 . "#268bd2"))))
