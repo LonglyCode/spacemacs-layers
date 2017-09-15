@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: format()
+# key: logformat
+# group: Definitions
+# --
+log.error("======= {}".format($0))

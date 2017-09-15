@@ -44,10 +44,17 @@
         nodejs-repl
         ivy
         protobuf-mode
+        nov
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-nov ()
+
+  (use-package nov
+    :init
+    (setq auto-mode-alist (cons '(".epub$" . nov-mode) auto-mode-alist))))
 
 (defun wtx-edit/init-protobuf-mode ()
   (use-package protobuf-mode
