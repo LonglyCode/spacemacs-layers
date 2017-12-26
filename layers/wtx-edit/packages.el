@@ -49,18 +49,27 @@
         etags-select
         (python :location built-in)
         counsel-tramp
+        ox-hugo
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
 
+(defun wtx-edit/init-ox-hugo ()
+  (use-package ox-hugo
+    :ensure t
+    :after ox
+    ))
+
 (defun wtx-edit/init-counsel-tramp ()
-  ;; if you use pyton3, then you could comment the following line
   (use-package counsel-tramp
     :init
     (progn
       (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
       (setq tramp-default-method "ssh")
+      ;; open remote
+      (evil-leader/set-key
+        "or" 'counsel-tramp)
       ))
   )
 
@@ -123,10 +132,24 @@
     ))
 
 (defun wtx-edit/init-nov ()
-
   (use-package nov
     :init
-    (setq auto-mode-alist (cons '(".epub$" . nov-mode) auto-mode-alist))))
+    (setq auto-mode-alist (cons '(".epub$" . nov-mode) auto-mode-alist))
+    :config
+    (progn
+      (setq nov-text-width 80)
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+        "p" 'nov-previous-document)
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+        "j" 'nov-previous-document)
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+        "n" 'nov-next-document)
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+        "k" 'nov-next-document)
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+        "h" 'nov-goto-toc)
+        )
+    ))
 
 (defun wtx-edit/init-protobuf-mode ()
   (use-package protobuf-mode
