@@ -45,10 +45,71 @@
         ivy
         protobuf-mode
         nov
+        gist
+        etags-select
+        (python :location built-in)
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/post-init-python ()
+  ;; if you use pyton3, then you could comment the following line
+  (progn (spacemacs/set-leader-keys-for-major-mode 'python-mode
+    "gd" 'etags-select-find-tag-at-point))
+
+  )
+
+(defun wtx-edit/init-etags-select ()
+  (use-package etags-select
+    :init
+    (progn
+      (define-key evil-normal-state-map (kbd "gf")
+        (lambda () (interactive) (find-tag (find-tag-default-as-regexp))))
+
+      (define-key evil-normal-state-map (kbd "gb") 'pop-tag-mark)
+
+      (define-key evil-normal-state-map (kbd "gn")
+        (lambda () (interactive) (find-tag last-tag t)))
+
+      (evilified-state-evilify etags-select-mode etags-select-mode-map)
+      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+        "gd" 'etags-select-find-tag-at-point))))
+
+(defun wtx-edit/post-init-gist ()
+  (use-package gist
+    :defer t
+    :init
+    (setq gist-list-format
+          '((files "File" 30 nil "%s")
+            (id "Id" 10 nil identity)
+            (created "Created" 20 nil "%D %R")
+            (visibility "Visibility" 10 nil
+                        (lambda
+                          (public)
+                          (or
+                           (and public "public")
+                           "private")))
+            (description "Description" 0 nil identity)))
+    :config
+    (progn
+      (spacemacs|define-transient-state gist-list-mode
+        :title "Gist-mode Transient State"
+        :bindings
+        ("k" gist-kill-current "delete gist")
+        ("e" gist-edit-current-description "edit gist title")
+        ("+" gist-add-buffer "add a file")
+        ("-" gist-remove-file "delete a file")
+        ("y" gist-print-current-url "print url")
+        ("b" gist-browse-current-url "browse gist in browser")
+        ("*" gist-star "star gist")
+        ("^" gist-unstar "unstar gist")
+        ("f" gist-fork "fork gist")
+        ("q" nil "quit" :exit t)
+        ("<escape>" nil nil :exit t))
+      (spacemacs/set-leader-keys-for-major-mode 'gist-list-mode
+        "." 'spacemacs/gist-list-mode-transient-state/body))
+    ))
 
 (defun wtx-edit/init-nov ()
 
@@ -128,6 +189,27 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
             (if (looking-back "^")
                 (hydra-org-template/body)
               (self-insert-command 1)))))
+
+      (defhydra multiple-cursors-hydra (:hint nil)
+        "
+       ^Up^            ^Down^        ^Other^
+             ----------------------------------------------
+         [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+         [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+         [_M-p_] Unmark  [_M-n_] Unmark [_r_] Mark by regexp
+         ^ ^             ^ ^ [_q_] Quit
+       "
+        ("l" mc/edit-lines :exit t)
+        ("a" mc/mark-all-like-this :exit t)
+        ("n" mc/mark-next-like-this)
+        ("N" mc/skip-to-next-like-this)
+        ("M-n" mc/unmark-next-like-this)
+        ("p" mc/mark-previous-like-this)
+        ("P" mc/skip-to-previous-like-this)
+        ("M-p" mc/unmark-previous-like-this)
+        ("r" mc/mark-all-in-region-regexp :exit t)
+        ("q"
+         nil))
       ))
 
 (defun wtx-edit/post-init-tagedit ()

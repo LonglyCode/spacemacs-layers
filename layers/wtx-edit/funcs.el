@@ -249,4 +249,3 @@ version 2015-08-21"
                            (ivy-read (format "ZSH history:") collection))))
       (kill-new val)
       (message "%s => kill-ring" val))))
-
