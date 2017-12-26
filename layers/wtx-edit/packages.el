@@ -48,10 +48,21 @@
         gist
         etags-select
         (python :location built-in)
+        counsel-tramp
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-counsel-tramp ()
+  ;; if you use pyton3, then you could comment the following line
+  (use-package counsel-tramp
+    :init
+    (progn
+      (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+      (setq tramp-default-method "ssh")
+      ))
+  )
 
 (defun wtx-edit/post-init-python ()
   ;; if you use pyton3, then you could comment the following line
