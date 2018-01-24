@@ -138,15 +138,11 @@
     :config
     (progn
       (setq nov-text-width 80)
-      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
-        "p" 'nov-previous-document)
-      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
-        "j" 'nov-previous-document)
-      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
-        "n" 'nov-next-document)
-      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
-        "k" 'nov-next-document)
-      (spacemacs/set-leader-keys-for-major-mode 'nov-mode-map
+      (spacemacs/set-leader-keys-for-major-mode 'nov-mode
+        "p" 'nov-previous-document
+        "j" 'nov-previous-document
+        "n" 'nov-next-document
+        "k" 'nov-next-document
         "h" 'nov-goto-toc)
         )
     ))
@@ -283,7 +279,7 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
           (start-process "grip" "*gfm-to-html*" "grip" (buffer-file-name) "5000")
           (browse-url (format "http://localhost:5000/%s.%s" (file-name-base) (file-name-extension (buffer-file-name)))))
 
-        (spacemacs/set-leader-keys-for-major-mode 'gfm-mode-map
+        (spacemacs/set-leader-keys-for-major-mode 'gfm-mode
           "p" 'wtx/markdown-to-html)
         (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
           "p" 'wtx/markdown-to-html)

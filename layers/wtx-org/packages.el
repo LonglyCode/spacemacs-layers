@@ -30,8 +30,11 @@
 ;;; Code:
 
 (defconst wtx-org-packages
-  '((org :location built-in))
-        )
+  '((org :location built-in)
+    ox-mediawiki
+    ))
+(defun wtx-org/init-ox-mediawiki ()
+  (spacemacs|use-package-add-hook org :post-config (require 'ox-mediawiki)))
 
 (defun wtx-org/post-init-org ()
   (add-hook 'org-mode-hook (lambda () (spacemacs/toggle-line-numbers-off)) 'append)
