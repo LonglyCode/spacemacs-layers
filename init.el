@@ -46,8 +46,6 @@ values."
      search-engine
      (javascript :variables javascript-disable-tern-port-files nil)
      ivy
-     clojure
-
      (go :variables go-tab-width 4)
 
      (auto-completion :variable
@@ -70,8 +68,6 @@ values."
              python-sort-imports-on-save t
              )
      colors
-     ruby
-     react
      html
      (c-c++ :variables
             c-c++-default-mode-for-headers 'c++-mode)
