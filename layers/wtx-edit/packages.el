@@ -15,7 +15,7 @@
 (setq wtx-edit-packages
       '(
         company
-        company-anaconda
+        ;; company-anaconda
         yasnippet
         ace-pinyin
         js2-mode
@@ -24,7 +24,7 @@
         helm-github-stars
         ;; deft
         web-mode
-        impatient-mode
+        ;; impatient-mode
         (nodejs-repl-eval :location local)
         (dired-mode :location built-in)
        ;; chinese-fonts-setup
@@ -46,20 +46,13 @@
         protobuf-mode
         nov
         gist
-        etags-select
-        (python :location built-in)
+        ;; (python :location built-in)
         counsel-tramp
-        ox-hugo
+        ;; ox-hugo
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
-
-(defun wtx-edit/init-ox-hugo ()
-  (use-package ox-hugo
-    :ensure t
-    :after ox
-    ))
 
 (defun wtx-edit/init-counsel-tramp ()
   (use-package counsel-tramp
@@ -72,29 +65,6 @@
         "or" 'counsel-tramp)
       ))
   )
-
-(defun wtx-edit/post-init-python ()
-  ;; if you use pyton3, then you could comment the following line
-  (progn (spacemacs/set-leader-keys-for-major-mode 'python-mode
-    "gd" 'etags-select-find-tag-at-point))
-
-  )
-
-(defun wtx-edit/init-etags-select ()
-  (use-package etags-select
-    :init
-    (progn
-      (define-key evil-normal-state-map (kbd "gf")
-        (lambda () (interactive) (find-tag (find-tag-default-as-regexp))))
-
-      (define-key evil-normal-state-map (kbd "gb") 'pop-tag-mark)
-
-      (define-key evil-normal-state-map (kbd "gn")
-        (lambda () (interactive) (find-tag last-tag t)))
-
-      (evilified-state-evilify etags-select-mode etags-select-mode-map)
-      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
-        "gd" 'etags-select-find-tag-at-point))))
 
 (defun wtx-edit/post-init-gist ()
   (use-package gist
@@ -484,21 +454,6 @@ open and unsaved."
     )
   )
 
-(defun wtx-edit/init-impatient-mode ()
-  "Initialize impatient mode"
-  (use-package impatient-mode
-    :init
-    (progn
-      (defun wtx-mode-hook ()
-        "my web mode hook for HTML REPL"
-        (interactive)
-        (impatient-mode)
-        (httpd-start))
-      (add-hook 'web-mode-hook 'wtx-mode-hook)
-      (evil-leader/set-key-for-mode 'web-mode
-        "p" 'imp-visit-buffer)
-)))
-
 (defun wtx-edit/init-nodejs-repl ()
   (use-package nodejs-repl
     :init
@@ -685,16 +640,8 @@ open and unsaved."
   (defun wtx-edit/post-init-company ()
     (progn
       (setq company-etags-everywhere '(html-mode web-mode))
-      (spacemacs|add-company-hook comint-mode)
       )
-    )
-
-  ;; Add the backend to the major-mode specific backend list, it can not work to pushing company-anaconda, why?
-  (defun wtx-edit/post-init-company-anaconda ()
-    (use-package company-anaconda
-      :if (configuration-layer/package-usedp 'company)
-      :defer t
-      :init (push 'company-anaconda company-backends-comint-mode))))
+    ))
 
 
 (defun wtx-edit/init-ace-pinyin ()

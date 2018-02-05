@@ -1,5 +1,3 @@
-(spacemacs|defvar-company-backends comint-mode)
-
 (setq user-mail-address "emoxun8215@gmail.com")
 (global-prettify-symbols-mode 1)
 (spacemacs|add-toggle iimage
