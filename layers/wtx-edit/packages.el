@@ -241,8 +241,6 @@ _h_tml    ^ ^         ^ ^             _A_SCII:
 
     (with-eval-after-load 'markdown-mode
       (progn
-        (when (configuration-layer/package-usedp 'company)
-          (spacemacs|add-company-hook markdown-mode))
 
         (defun wtx/markdown-to-html ()
           (interactive)
