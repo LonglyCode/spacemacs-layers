@@ -15,19 +15,15 @@
 (setq wtx-edit-packages
       '(
         company
-        ;; company-anaconda
         yasnippet
         ace-pinyin
         js2-mode
         youdao-dictionary
         pangu-spacing
         helm-github-stars
-        ;; deft
         web-mode
-        ;; impatient-mode
         (nodejs-repl-eval :location local)
         (dired-mode :location built-in)
-       ;; chinese-fonts-setup
         peep-dired
         beacon
         evil-vimish-fold
@@ -37,7 +33,6 @@
         visual-regexp
         flycheck-package
         markdown-mode
-        ;; keyfreq
         css-mode
         tagedit
         hydra
@@ -46,9 +41,7 @@
         protobuf-mode
         nov
         gist
-        ;; (python :location built-in)
         counsel-tramp
-        ;; ox-hugo
       ))
 
 ;; List of packages to exclude.
