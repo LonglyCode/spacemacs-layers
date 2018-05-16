@@ -42,10 +42,18 @@
         nov
         gist
         counsel-tramp
+        vue-mode
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-vue-mode()
+  (use-package vue-mode
+    :config
+    (setq mmm-submode-decoration-level 0)
+    )
+  )
 
 (defun wtx-edit/init-counsel-tramp ()
   (use-package counsel-tramp
