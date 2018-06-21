@@ -43,10 +43,16 @@
         gist
         counsel-tramp
         vue-mode
+        (go-dlv :location local)
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-go-dlv ()
+  (use-package go-dlv
+    :init
+    ))
 
 (defun wtx-edit/init-vue-mode()
   (use-package vue-mode
