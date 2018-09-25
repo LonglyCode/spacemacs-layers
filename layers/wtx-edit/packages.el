@@ -44,10 +44,20 @@
         counsel-tramp
         vue-mode
         (go-dlv :location local)
+        (insert-translated-name :location local)
       ))
 
 ;; List of packages to exclude.
 (setq wtx-edit-excluded-packages '())
+
+(defun wtx-edit/init-insert-translated-name ()
+  (use-package insert-translated-name
+    :init
+    (progn
+      (evil-leader/set-key
+        "os" 'insert-translated-name-insert)
+      )
+    ))
 
 (defun wtx-edit/init-go-dlv ()
   (use-package go-dlv
