@@ -28,18 +28,18 @@ unwanted space when exporting org-mode to html."
       (insert (format "[[%s%s]]" prefix imagename))
     (insert (format "![%s](%s%s)" imagename prefix imagename))))
 
-(defadvice newline-and-indent (before insert-end-of-line-semicolon activate)
-  "insert-end-of-line-semicolon for python-mode"
-  (interactive)
-  (let ((p (point)))
-    (beginning-of-line)
-    (if (and (looking-at "[[:blank:]]*\\(def\\|class\\|for\\|if\\)") (eq (with-current-buffer (current-buffer) major-mode) 'python-mode))
-        (progn
-          (end-of-line)
-          (insert ":")
-         )
-      (goto-char p)))
-)
+;; (defadvice newline-and-indent (before insert-end-of-line-semicolon activate)
+;;   "insert-end-of-line-semicolon for python-mode"
+;;   (interactive)
+;;   (let ((p (point)))
+;;     (beginning-of-line)
+;;     (if (and (looking-at "[[:blank:]]*\\(def\\|class\\|for\\|if\\)") (eq (with-current-buffer (current-buffer) major-mode) 'python-mode))
+;;         (progn
+;;           (end-of-line)
+;;           (insert ":")
+;;          )
+;;       (goto-char p)))
+;; )
 
 (defun kill-default-buffer ()
   "Kill the currently active buffer -- set to C-x k so that users are not asked which buffer they want to kill."
